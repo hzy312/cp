@@ -1,7 +1,6 @@
 #ifndef _NODE_H
 #define _NODE_H
 
-// #include <unistd.h>
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -13,42 +12,30 @@ typedef enum nodeType {
     TOKEN_FLOAT,
     TOKEN_ID,
     TOKEN_TYPE,
-    // TOKEN_COMMA,
-    // TOKEN_SEMI,
-    // TOKEN_ASSIGNOP,
-    // TOKEN_RELOP,
-    // TOKEN_PLUS,
-    // TOKEN_MINUS,
     TOKEN_OTHER,
     NOT_A_TOKEN
 
 } NodeType;
 
-// #define NAME_LENGTH 32
-// #define VAL_LENGTH 64
 
 #define TRUE 1
 #define FALSE 0
 
-// typedef uint_32 bool;
-
-// node type declared
 typedef struct node {
-    int lineNo;  //  node in which line
-    //   int depth;   //  node depth, for count white space for print
-    NodeType type;  // node type
-    char* name;     //  node name
-    char* val;      //  node value
 
-    struct node* child;  //  non-terminals node first child node
-    struct node* next;   //  non-terminals node next brother node
+    int lineNo; // 行号
+    NodeType type;  
+    char* name;    
+    char* val;      
+    struct node* child;  // 儿子指针
+    struct node* next;   //  兄弟指针
 
 } Node;
-
+// 节点指针
 typedef Node* pNode;
 
-static inline pNode newNode(int lineNo, NodeType type, char* name, int argc,
-                            ...) {
+// 带有可选参数
+static inline pNode newNode(int lineNo, NodeType type, char* name, int argc, ...) {
     pNode curNode = NULL;
     int nameLength = strlen(name) + 1;
 
@@ -67,21 +54,21 @@ static inline pNode newNode(int lineNo, NodeType type, char* name, int argc,
     curNode->type = type;
     strncpy(curNode->name, name, nameLength);
 
-    va_list vaList;
-    va_start(vaList, argc);
+    va_list vp;
+    va_start(vp, argc);
 
-    pNode tempNode = va_arg(vaList, pNode);
+    pNode tempNode = va_arg(vp, pNode);
 
     curNode->child = tempNode;
 
     for (int i = 1; i < argc; i++) {
-        tempNode->next = va_arg(vaList, pNode);
+        tempNode->next = va_arg(vp, pNode);
         if (tempNode->next != NULL) {
             tempNode = tempNode->next;
         }
     }
 
-    va_end(vaList);
+    va_end(vp);
     return curNode;
 }
 
